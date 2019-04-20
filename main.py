@@ -8,6 +8,6 @@ engine = mirror_engine.MirrorEngine()
 engine.initialize()
 engine.run()
 
-#TODO: remirror, create mirror again on updated master
+#TODO:
 # compare diffs on up and downstream
 # update downstream dme with upstream
