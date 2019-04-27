@@ -2,6 +2,7 @@ import time
 import logging
 import config
 
+
 def github_event_stream(repos, req_types):
 	logger = logging.getLogger("log")
 	last_seen_ids = {}
@@ -11,9 +12,11 @@ def github_event_stream(repos, req_types):
 	while True:
 		for repo in repos:
 			event_list = []
-			for e in repo.get_events(): event_list.append(e)
-			event_list = [e for e in event_list if int(e.id) > last_seen_ids[repo.html_url]]
-			event_list.sort(key = lambda e: int(e.id))
+			for e in repo.get_events():
+				event_list.append(e)
+			event_list = [e for e in event_list if int(
+				e.id) > last_seen_ids[repo.html_url]]
+			event_list.sort(key=lambda e: int(e.id))
 			if not event_list:
 				logger.debug("No new events.")
 			for e in event_list:
