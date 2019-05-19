@@ -53,20 +53,20 @@ def mirror_pr(upstream, downstream, pr_id):
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 			if original_pull.merge_commit_sha in [c.sha for c in commits]:
 				for c in commits:
-					subprocess.run(["git", "cherry-pick", "-n", c.sha])
+					subprocess.run(["git", "cherry-pick", "--no-commit", "-n", c.sha])
 					subprocess.run(["git", "add", "-A", "."])
-					subprocess.run(["git", "commit", "-m", c.commit.message])
+					subprocess.run(["git", "commit", "--no-edit", "-m", c.commit.message])
 					subprocess.run(["git", "cherry-pick", "--continue"])
 			else:
-				subprocess.run(["git", "cherry-pick", "-n",
+				subprocess.run(["git", "cherry-pick", "--no-commit", "-n",
                                     original_pull.merge_commit_sha])
 				subprocess.run(["git", "add", "-A", "."])
-				subprocess.run(["git", "commit", "-m", original_pull.title])
+				subprocess.run(["git", "commit", "--no-edit", "-m", original_pull.title])
 				subprocess.run(["git", "cherry-pick", "--continue"])
 		else:
 			subprocess.run(["git", "add", "-A", "."])
 
-		subprocess.run(["git", "commit", "--allow-empty", "-m", original_pull.title],
+		subprocess.run(["git", "commit", "--allow-empty", "--no-edit", "-m", original_pull.title],
 		               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 		logger.debug("Pushing to downstream.")
 		subprocess.run(["git", "push", "downstream",
