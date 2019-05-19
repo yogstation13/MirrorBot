@@ -77,13 +77,16 @@ class MirrorEngine:
 
 	def run(self):
 		self.logger.info("Mirror engine running.")
-		for repo, event in stream_events.github_event_stream([self.upstream, self.downstream], ["PullRequestEvent", "IssueCommentEvent"]):
+		for repo, event in stream_events.github_event_stream(self.github_api, [self.upstream, self.downstream], ["PullRequestEvent", "IssueCommentEvent"]):
 			if event.type == "PullRequestEvent" and repo == self.upstream:
 				self.logger.debug("Processing PR event.")
 				if event.payload["action"] == "closed" and event.payload["pull_request"]["merged"]:
 					self.logger.info("Processing merge.")
+					requests_left, request_limit = self.github_api.rate_limiting
 					mirror.mirror_pr(self.upstream, self.downstream, int(
 						event.payload["pull_request"]["number"]))
+					requests_left_after, request_limit_after = self.github_api.rate_limiting
+					self.logger.info(f"Performed {requests_left - requests_left_after} requests ({requests_left_after} left)")
 			elif event.type == "IssueCommentEvent" and repo == self.downstream:
 				self.logger.debug("Processing comment.")
 				if event.payload["action"] != "created":
