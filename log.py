@@ -1,4 +1,5 @@
 import logging
+import config
 
 def make_logger(name):
 	formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(module)s - %(message)s')
@@ -10,7 +11,7 @@ def make_logger(name):
 	fhandler.setFormatter(formatter)
 
 	logger = logging.getLogger(name)
-	logger.setLevel(logging.DEBUG)
+	logger.setLevel(config.log_level)
 	logger.addHandler(shandler)
 	logger.addHandler(fhandler)
 	return logger
