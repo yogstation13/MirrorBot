@@ -13,8 +13,12 @@ def github_event_stream(github_api, repos, req_types):
 		requests_left, request_limit = github_api.rate_limiting
 		for repo in repos:
 			event_list = []
-			for e in repo.get_events():
-				event_list.append(e)
+			try:
+				for e in repo.get_events():
+					event_list.append(e)
+			except:
+				logger.exception("An error occured during event acquisition.")
+				continue
 			event_list = [e for e in event_list if int(
 				e.id) > last_seen_ids[repo.html_url]]
 			event_list.sort(key=lambda e: int(e.id))
